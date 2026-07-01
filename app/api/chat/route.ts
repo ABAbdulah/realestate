@@ -6,9 +6,10 @@ export const runtime = 'nodejs';
 type Msg = { role: 'user' | 'assistant'; content: string };
 
 // ── Provider-agnostic chat. Swap providers with the AI_PROVIDER env var. ──
-// AI_PROVIDER=gemini  -> Google Gemini Flash (free tier, for dev/testing)
-// AI_PROVIDER=openai  -> OpenAI GPT (production)
-// No key set          -> graceful mock reply so the demo works offline.
+// AI_PROVIDER=gemini      -> Google Gemini Flash (free tier, for dev/testing)
+// AI_PROVIDER=openrouter  -> OpenRouter (OpenAI-compatible, for testing)
+// AI_PROVIDER=openai      -> OpenAI GPT (production)
+// No key set              -> graceful mock reply so the demo works offline.
 
 async function callGemini(messages: Msg[]): Promise<string> {
   const key = process.env.GEMINI_API_KEY;
@@ -53,6 +54,29 @@ async function callOpenAI(messages: Msg[]): Promise<string> {
   return data?.choices?.[0]?.message?.content ?? "Sorry, I didn't catch that.";
 }
 
+async function callOpenRouter(messages: Msg[]): Promise<string> {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) return mockReply(messages);
+  const model = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini';
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${key}`,
+      // Optional but recommended by OpenRouter for attribution/ranking.
+      'HTTP-Referer': process.env.SITE_URL || 'http://localhost:3000',
+      'X-Title': 'Deal Desk Assistant',
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'system', content: chatbot.systemPrompt }, ...messages],
+    }),
+  });
+  if (!res.ok) throw new Error(`OpenRouter ${res.status}`);
+  const data = await res.json();
+  return data?.choices?.[0]?.message?.content ?? "Sorry, I didn't catch that.";
+}
+
 function mockReply(messages: Msg[]): string {
   const last = messages[messages.length - 1]?.content ?? '';
   return `(${'demo mode — no API key set'}) Thanks! You said: "${last.slice(0, 80)}". In production I'd qualify your buy-box and capture your contact so the team can send matching off-market deals. Add a GEMINI_API_KEY or OPENAI_API_KEY in .env to go live.`;
@@ -65,7 +89,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'messages[] required' }, { status: 400 });
     }
     const provider = (process.env.AI_PROVIDER || 'gemini').toLowerCase();
-    const reply = provider === 'openai' ? await callOpenAI(messages) : await callGemini(messages);
+    const reply =
+      provider === 'openai'
+        ? await callOpenAI(messages)
+        : provider === 'openrouter'
+          ? await callOpenRouter(messages)
+          : await callGemini(messages);
     return NextResponse.json({ reply });
   } catch (err) {
     console.error('[chat] error', err);

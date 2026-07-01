@@ -27,7 +27,7 @@ export default function Footer() {
 
           {sent ? (
             <div className="flex flex-col items-start justify-center gap-3 rounded-2xl border border-gold/30 bg-gold/5 p-8">
-              <div className="grid h-12 w-12 place-items-center rounded-full bg-gold text-ink">
+              <div className="grid h-12 w-12 place-items-center rounded-full bg-gold text-onaccent">
                 <Check className="h-6 w-6" />
               </div>
               <h3 className="text-xl font-bold text-sand">You&apos;re on the list.</h3>
@@ -36,17 +36,17 @@ export default function Footer() {
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="grid gap-4 sm:grid-cols-2">
-                <input required placeholder="Full name" aria-label="Full name" className="rounded-xl border border-white/10 bg-ink-900 px-4 py-3 text-sand placeholder:text-muted/60 focus:border-gold/60 focus:outline-none" />
-                <input required type="email" placeholder="Email" aria-label="Email" className="rounded-xl border border-white/10 bg-ink-900 px-4 py-3 text-sand placeholder:text-muted/60 focus:border-gold/60 focus:outline-none" />
+                <input required placeholder="Full name" aria-label="Full name" className="rounded-xl border border-sand/10 bg-ink-900 px-4 py-3 text-sand placeholder:text-muted/60 focus:border-gold/60 focus:outline-none" />
+                <input required type="email" placeholder="Email" aria-label="Email" className="rounded-xl border border-sand/10 bg-ink-900 px-4 py-3 text-sand placeholder:text-muted/60 focus:border-gold/60 focus:outline-none" />
               </div>
-              <select required aria-label="Investor type" defaultValue="" className="rounded-xl border border-white/10 bg-ink-900 px-4 py-3 text-sand focus:border-gold/60 focus:outline-none">
+              <select required aria-label="Investor type" defaultValue="" className="rounded-xl border border-sand/10 bg-ink-900 px-4 py-3 text-sand focus:border-gold/60 focus:outline-none">
                 <option value="" disabled>I am a…</option>
                 <option>Fix &amp; flip investor</option>
                 <option>Wholesaler</option>
                 <option>Buy &amp; hold investor</option>
               </select>
-              <input placeholder="Target markets (e.g. TX, FL)" aria-label="Target markets" className="rounded-xl border border-white/10 bg-ink-900 px-4 py-3 text-sand placeholder:text-muted/60 focus:border-gold/60 focus:outline-none" />
-              <button type="submit" className="group flex items-center justify-center gap-2 rounded-xl bg-gold px-6 py-3.5 font-semibold text-ink transition-transform hover:scale-[1.02]">
+              <input placeholder="Target markets (e.g. TX, FL)" aria-label="Target markets" className="rounded-xl border border-sand/10 bg-ink-900 px-4 py-3 text-sand placeholder:text-muted/60 focus:border-gold/60 focus:outline-none" />
+              <button type="submit" className="group flex items-center justify-center gap-2 rounded-xl bg-gold px-6 py-3.5 font-semibold text-onaccent transition-transform hover:scale-[1.02]">
                 Join the buyer list
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
@@ -55,7 +55,7 @@ export default function Footer() {
         </div>
 
         {/* Footer links */}
-        <div className="mt-20 flex flex-col items-center justify-between gap-8 border-t border-white/10 pt-10 md:flex-row">
+        <div className="mt-20 flex flex-col items-center justify-between gap-8 border-t border-sand/10 pt-10 md:flex-row">
           <div className="font-mono text-sm uppercase tracking-[0.2em] text-sand">
             {brand.name}
             <span className="text-gold">.</span>

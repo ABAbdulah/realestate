@@ -36,7 +36,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      data-theme="gold"
+      suppressHydrationWarning
+      className={`${inter.variable} ${playfair.variable} ${mono.variable}`}
+    >
+      <head>
+        {/* Apply saved theme before paint to avoid a flash of the wrong colors. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='gold'&&t!=='teal')t='gold';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="font-sans antialiased bg-ink text-sand">{children}</body>
     </html>
   );

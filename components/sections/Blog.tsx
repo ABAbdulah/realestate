@@ -1,11 +1,7 @@
+import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import Reveal from '@/components/ui/Reveal';
-
-const posts = [
-  { tag: 'Wholesaling', title: 'How to read a motivated-seller lead in 60 seconds', read: '5 min' },
-  { tag: 'Flipping', title: 'The 70% rule is dead — here is what we use instead', read: '7 min' },
-  { tag: 'Markets', title: '2026 outlook: the 8 states with the best flip spreads', read: '6 min' },
-];
+import { posts } from '@/lib/config';
 
 export default function Blog() {
   return (
@@ -16,25 +12,26 @@ export default function Blog() {
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-gold-400">Insights</p>
             <h2 className="mt-3 text-4xl font-extrabold tracking-tightest text-sand md:text-5xl">From the deal desk</h2>
           </div>
-          <a href="#" className="hidden items-center gap-1 text-sm text-muted transition-colors hover:text-gold-400 md:flex">
+          <Link href="/blog" className="hidden items-center gap-1 text-sm text-muted transition-colors hover:text-gold-400 md:flex">
             All articles <ArrowUpRight className="h-4 w-4" />
-          </a>
+          </Link>
         </Reveal>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {posts.map((post, i) => (
-            <Reveal key={post.title} delay={i * 0.08}>
-              <a
-                href="#"
-                className="group flex h-full flex-col rounded-2xl border border-white/10 bg-ink/60 p-6 transition-colors hover:border-gold/40"
+          {posts.slice(0, 3).map((post, i) => (
+            <Reveal key={post.slug} delay={i * 0.08}>
+              <Link
+                href={`/blog/${post.slug}`}
+                className="group flex h-full flex-col rounded-2xl border border-sand/10 bg-ink/60 p-6 transition-colors hover:border-gold/40"
               >
-                <div className="aspect-[16/10] rounded-xl bg-gradient-to-br from-ink-800 via-ink to-black" />
+                <div className="aspect-[16/10] rounded-xl bg-gradient-to-br from-ink-800 via-ink to-ink-900" />
                 <span className="mt-6 font-mono text-[10px] uppercase tracking-widest text-gold-400">{post.tag}</span>
                 <h3 className="mt-2 text-xl font-bold leading-snug text-sand transition-colors group-hover:text-gold-400">
                   {post.title}
                 </h3>
-                <span className="mt-auto pt-6 text-sm text-muted">{post.read} read</span>
-              </a>
+                <p className="mt-2 line-clamp-2 text-sm text-muted">{post.excerpt}</p>
+                <span className="mt-auto pt-6 text-sm text-muted">{post.date} · {post.read} read</span>
+              </Link>
             </Reveal>
           ))}
         </div>

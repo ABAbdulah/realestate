@@ -10,7 +10,7 @@ export default function Hero() {
   return (
     <section id="top" className="relative flex h-screen flex-col items-center justify-center px-6 text-center">
       {/* readability scrim */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(12,10,9,0.55)_0%,rgba(12,10,9,0.15)_45%,transparent_70%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--scrim)_0%,transparent_70%)]" />
 
       <div className="relative z-10 flex flex-col items-center">
         {/* Founder face as the brand */}
@@ -21,7 +21,7 @@ export default function Hero() {
           className="relative mb-8"
         >
           <div className="absolute -inset-3 rounded-full bg-gold/20 blur-2xl" />
-          <div className="relative grid h-32 w-32 place-items-center overflow-hidden rounded-full border border-gold/50 bg-gradient-to-br from-ink-800 to-ink shadow-[0_0_60px_-10px_rgba(201,154,59,0.6)]">
+          <div className="relative grid h-32 w-32 place-items-center overflow-hidden rounded-full border border-gold/50 bg-gradient-to-br from-ink-800 to-ink shadow-[0_0_60px_-10px_var(--glow)]">
             <span className="font-quote text-4xl italic text-gold-400">
               {brand.name.split(' ').map((w) => w[0]).join('')}
             </span>
@@ -66,11 +66,11 @@ export default function Hero() {
         >
           <a
             href="#contact"
-            className="rounded-full bg-gold px-8 py-3.5 font-semibold text-ink shadow-[0_8px_30px_-8px_rgba(201,154,59,0.7)] transition-transform hover:scale-[1.03]"
+            className="rounded-full bg-gold px-8 py-3.5 font-semibold text-onaccent shadow-[0_8px_30px_-8px_var(--glow)] transition-transform hover:scale-[1.03]"
           >
             Join the Buyer List
           </a>
-          <a href="#proof" className="rounded-full border border-white/15 px-8 py-3.5 font-medium text-sand transition-colors hover:border-gold/50">
+          <a href="#proof" className="rounded-full border border-sand/15 px-8 py-3.5 font-medium text-sand transition-colors hover:border-gold/50">
             See the results
           </a>
         </motion.div>

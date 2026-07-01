@@ -12,7 +12,7 @@ export default function SocialProof() {
 
       <div className="mx-auto max-w-7xl px-6 py-28">
         {/* Stats */}
-        <Reveal className="grid grid-cols-2 gap-8 border-y border-white/10 py-12 md:grid-cols-4">
+        <Reveal className="grid grid-cols-2 gap-8 border-y border-sand/10 py-12 md:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label} className="text-center">
               <div className="font-mono text-4xl font-bold text-gold-400 md:text-5xl">{s.value}</div>
@@ -33,10 +33,10 @@ export default function SocialProof() {
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {testimonials.map((t, i) => (
             <Reveal key={t.name} delay={i * 0.08}>
-              <article className="group flex h-full flex-col rounded-2xl border border-white/10 bg-ink-900/60 p-6 transition-colors hover:border-gold/40">
+              <article className="group flex h-full flex-col rounded-2xl border border-sand/10 bg-ink-900/60 p-6 transition-colors hover:border-gold/40">
                 {/* video placeholder */}
-                <div className="relative mb-6 grid aspect-video place-items-center overflow-hidden rounded-xl bg-gradient-to-br from-ink-800 to-black">
-                  <div className="grid h-14 w-14 place-items-center rounded-full bg-gold/90 text-ink transition-transform group-hover:scale-110">
+                <div className="relative mb-6 grid aspect-video place-items-center overflow-hidden rounded-xl bg-gradient-to-br from-ink-800 to-ink-900">
+                  <div className="grid h-14 w-14 place-items-center rounded-full bg-gold/90 text-onaccent transition-transform group-hover:scale-110">
                     <Play className="h-5 w-5 translate-x-[1px]" fill="currentColor" />
                   </div>
                   <span className="absolute bottom-3 left-3 font-mono text-[10px] uppercase tracking-widest text-muted">

@@ -9,21 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Art direction A — Dark cinematic + gold
+        // Semantic tokens driven by CSS variables (see app/globals.css).
+        // Names kept as ink/gold/sand for low churn; values swap per [data-theme].
+        // "ink" = background/surfaces, "gold" = accent, "sand" = foreground text.
         ink: {
-          DEFAULT: '#0C0A09',
-          900: '#1C1917',
-          800: '#292524',
-          700: '#44403C',
+          DEFAULT: 'rgb(var(--c-bg) / <alpha-value>)',
+          900: 'rgb(var(--c-surface) / <alpha-value>)',
+          800: 'rgb(var(--c-surface-2) / <alpha-value>)',
+          700: 'rgb(var(--c-surface-3) / <alpha-value>)',
         },
         gold: {
-          DEFAULT: '#C99A3B',
-          400: '#D8B45A',
-          600: '#A16207',
-          700: '#854D0E',
+          DEFAULT: 'rgb(var(--c-accent) / <alpha-value>)',
+          400: 'rgb(var(--c-accent-400) / <alpha-value>)',
+          600: 'rgb(var(--c-accent-600) / <alpha-value>)',
+          700: 'rgb(var(--c-accent-700) / <alpha-value>)',
         },
-        sand: '#FAFAF9',
-        muted: '#A8A29E',
+        sand: 'rgb(var(--c-fg) / <alpha-value>)',
+        muted: 'rgb(var(--c-muted) / <alpha-value>)',
+        onaccent: 'rgb(var(--c-on-accent) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],

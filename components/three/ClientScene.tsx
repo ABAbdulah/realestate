@@ -13,7 +13,7 @@ export default function ClientScene() {
   if (!mounted) {
     return (
       <div
-        className="fixed inset-0 z-0 bg-gradient-to-b from-ink-900 via-ink to-black"
+        className="fixed inset-0 z-0 bg-gradient-to-b from-ink-900 via-ink to-ink-900"
         aria-hidden="true"
       />
     );

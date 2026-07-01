@@ -1,39 +1,43 @@
 'use client';
 
 import { useState } from 'react';
+import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import Reveal from '@/components/ui/Reveal';
 import { marketStates } from '@/lib/config';
 
-// Tile-grid cartogram of the U.S. (each state placed at an approximate row/col).
-// Production: swap for a true geographic SVG via react-simple-maps + us-atlas topojson.
-type Cell = { code: string; name: string; row: number; col: number };
+const GEO_URL = '/states-10m.json';
 
-const GRID: Cell[] = [
-  { code: 'AK', name: 'Alaska', row: 0, col: 0 }, { code: 'ME', name: 'Maine', row: 0, col: 10 },
-  { code: 'VT', name: 'Vermont', row: 1, col: 9 }, { code: 'NH', name: 'New Hampshire', row: 1, col: 10 },
-  { code: 'WA', name: 'Washington', row: 2, col: 0 }, { code: 'ID', name: 'Idaho', row: 2, col: 1 }, { code: 'MT', name: 'Montana', row: 2, col: 2 }, { code: 'ND', name: 'North Dakota', row: 2, col: 3 }, { code: 'MN', name: 'Minnesota', row: 2, col: 4 }, { code: 'WI', name: 'Wisconsin', row: 2, col: 5 }, { code: 'MI', name: 'Michigan', row: 2, col: 7 }, { code: 'NY', name: 'New York', row: 2, col: 9 }, { code: 'MA', name: 'Massachusetts', row: 2, col: 10 },
-  { code: 'OR', name: 'Oregon', row: 3, col: 0 }, { code: 'NV', name: 'Nevada', row: 3, col: 1 }, { code: 'WY', name: 'Wyoming', row: 3, col: 2 }, { code: 'SD', name: 'South Dakota', row: 3, col: 3 }, { code: 'IA', name: 'Iowa', row: 3, col: 4 }, { code: 'IL', name: 'Illinois', row: 3, col: 5 }, { code: 'IN', name: 'Indiana', row: 3, col: 6 }, { code: 'OH', name: 'Ohio', row: 3, col: 7 }, { code: 'PA', name: 'Pennsylvania', row: 3, col: 8 }, { code: 'NJ', name: 'New Jersey', row: 3, col: 9 }, { code: 'CT', name: 'Connecticut', row: 3, col: 10 },
-  { code: 'CA', name: 'California', row: 4, col: 0 }, { code: 'UT', name: 'Utah', row: 4, col: 1 }, { code: 'CO', name: 'Colorado', row: 4, col: 2 }, { code: 'NE', name: 'Nebraska', row: 4, col: 3 }, { code: 'MO', name: 'Missouri', row: 4, col: 4 }, { code: 'KY', name: 'Kentucky', row: 4, col: 5 }, { code: 'WV', name: 'West Virginia', row: 4, col: 6 }, { code: 'VA', name: 'Virginia', row: 4, col: 7 }, { code: 'MD', name: 'Maryland', row: 4, col: 8 }, { code: 'DE', name: 'Delaware', row: 4, col: 9 }, { code: 'RI', name: 'Rhode Island', row: 4, col: 10 },
-  { code: 'AZ', name: 'Arizona', row: 5, col: 1 }, { code: 'NM', name: 'New Mexico', row: 5, col: 2 }, { code: 'KS', name: 'Kansas', row: 5, col: 3 }, { code: 'AR', name: 'Arkansas', row: 5, col: 4 }, { code: 'TN', name: 'Tennessee', row: 5, col: 5 }, { code: 'NC', name: 'North Carolina', row: 5, col: 6 }, { code: 'SC', name: 'South Carolina', row: 5, col: 7 }, { code: 'DC', name: 'Washington D.C.', row: 5, col: 8 },
-  { code: 'HI', name: 'Hawaii', row: 6, col: 0 }, { code: 'OK', name: 'Oklahoma', row: 6, col: 3 }, { code: 'LA', name: 'Louisiana', row: 6, col: 4 }, { code: 'MS', name: 'Mississippi', row: 6, col: 5 }, { code: 'AL', name: 'Alabama', row: 6, col: 6 }, { code: 'GA', name: 'Georgia', row: 6, col: 7 },
-  { code: 'TX', name: 'Texas', row: 7, col: 3 }, { code: 'FL', name: 'Florida', row: 7, col: 8 },
-];
+// USPS code -> full name (matches us-atlas geography properties.name)
+const NAME: Record<string, string> = {
+  AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado',
+  CT: 'Connecticut', DE: 'Delaware', DC: 'District of Columbia', FL: 'Florida', GA: 'Georgia',
+  HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky',
+  LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota',
+  MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire',
+  NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota',
+  OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina',
+  SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia',
+  WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
+};
 
-function statusOf(code: string): 'completed' | 'active' | 'none' {
-  if (marketStates.completed.includes(code)) return 'completed';
-  if (marketStates.active.includes(code)) return 'active';
+const completed = new Set(marketStates.completed.map((c) => NAME[c]));
+const active = new Set(marketStates.active.map((c) => NAME[c]));
+
+type Status = 'completed' | 'active' | 'none';
+function statusByName(name: string): Status {
+  if (completed.has(name)) return 'completed';
+  if (active.has(name)) return 'active';
   return 'none';
 }
 
-const CHIP: Record<string, string> = {
-  completed: 'bg-gold text-ink border-gold shadow-[0_0_18px_-4px_rgba(201,154,59,0.8)]',
-  active: 'bg-gold/10 text-gold-400 border-gold/70 animate-pulse-glow',
-  none: 'bg-ink-800 text-muted/40 border-white/5 hover:border-white/20',
+const FILL: Record<Status, string> = {
+  completed: 'rgb(var(--c-accent))',
+  active: 'rgb(var(--c-accent-400) / 0.30)',
+  none: 'rgb(var(--c-surface-2))',
 };
 
 export default function USMap() {
-  const [hover, setHover] = useState<Cell | null>(null);
-  const hoverStatus = hover ? statusOf(hover.code) : null;
+  const [hover, setHover] = useState<{ name: string; status: Status } | null>(null);
 
   return (
     <section id="coverage" className="relative z-10 bg-gradient-to-b from-ink to-ink-900">
@@ -50,62 +54,85 @@ export default function USMap() {
         </Reveal>
 
         <Reveal delay={0.1} className="mt-12 flex flex-col gap-8 lg:flex-row lg:items-start">
-          {/* Map grid */}
-          <div
-            className="grid w-full max-w-3xl gap-1.5"
-            style={{ gridTemplateColumns: 'repeat(11, minmax(0, 1fr))' }}
-            onMouseLeave={() => setHover(null)}
-          >
-            {GRID.map((c) => (
-              <button
-                key={c.code}
-                type="button"
-                title={`${c.name} — ${statusOf(c.code)}`}
-                aria-label={`${c.name}, ${statusOf(c.code)}`}
-                onMouseEnter={() => setHover(c)}
-                onFocus={() => setHover(c)}
-                style={{ gridColumnStart: c.col + 1, gridRowStart: c.row + 1 }}
-                className={`aspect-square rounded-md border text-[10px] font-semibold transition-transform duration-150 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold ${CHIP[statusOf(c.code)]}`}
-              >
-                {c.code}
-              </button>
-            ))}
+          {/* Geographic map, framed */}
+          <div className="relative w-full overflow-hidden rounded-3xl border border-sand/10 bg-ink-900/40 p-2 sm:p-5">
+            <ComposableMap
+              projection="geoAlbersUsa"
+              width={960}
+              height={500}
+              projectionConfig={{ scale: 1070 }}
+              style={{ width: '100%', height: 'auto' }}
+            >
+              <Geographies geography={GEO_URL}>
+                {({ geographies }: { geographies: Array<{ rsmKey: string; properties: { name: string } }> }) =>
+                  geographies.map((geo) => {
+                    const name = geo.properties.name;
+                    const status = statusByName(name);
+                    return (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        onMouseEnter={() => setHover({ name, status })}
+                        onMouseLeave={() => setHover(null)}
+                        style={{
+                          default: {
+                            fill: FILL[status],
+                            stroke: 'rgb(var(--c-bg))',
+                            strokeWidth: 0.75,
+                            outline: 'none',
+                            transition: 'fill 0.2s ease',
+                          },
+                          hover: {
+                            fill: status === 'none' ? 'rgb(var(--c-surface-3))' : 'rgb(var(--c-accent-400))',
+                            stroke: 'rgb(var(--c-bg))',
+                            strokeWidth: 0.75,
+                            outline: 'none',
+                            cursor: 'pointer',
+                          },
+                          pressed: { fill: 'rgb(var(--c-accent))', outline: 'none' },
+                        }}
+                      />
+                    );
+                  })
+                }
+              </Geographies>
+            </ComposableMap>
           </div>
 
           {/* Legend + readout */}
           <div className="lg:w-64 lg:shrink-0">
-            <div className="rounded-2xl border border-white/10 bg-ink-900/70 p-6">
+            <div className="rounded-2xl border border-sand/10 bg-ink-900/70 p-6">
               <div className="min-h-[3rem]">
                 {hover ? (
                   <>
                     <div className="text-lg font-bold text-sand">{hover.name}</div>
                     <div
                       className={`mt-1 text-sm capitalize ${
-                        hoverStatus === 'completed'
+                        hover.status === 'completed'
                           ? 'text-gold-400'
-                          : hoverStatus === 'active'
+                          : hover.status === 'active'
                             ? 'text-gold'
                             : 'text-muted'
                       }`}
                     >
-                      {hoverStatus === 'none' ? 'Not yet active' : `${hoverStatus} market`}
+                      {hover.status === 'none' ? 'Not yet active' : `${hover.status} market`}
                     </div>
                   </>
                 ) : (
                   <div className="text-sm text-muted">Hover a state to see its status.</div>
                 )}
               </div>
-              <div className="mt-6 space-y-3 border-t border-white/10 pt-6 text-sm">
+              <div className="mt-6 space-y-3 border-t border-sand/10 pt-6 text-sm">
                 <div className="flex items-center gap-3">
-                  <span className="h-4 w-4 rounded bg-gold" />
+                  <span className="h-4 w-4 rounded-sm bg-gold" />
                   <span className="text-muted">Closed deals</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="h-4 w-4 rounded border border-gold/70 bg-gold/10" />
+                  <span className="h-4 w-4 rounded-sm border border-gold/60 bg-gold/25" />
                   <span className="text-muted">Active acquisition</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="h-4 w-4 rounded bg-ink-800" />
+                  <span className="h-4 w-4 rounded-sm bg-ink-800" />
                   <span className="text-muted">Expanding soon</span>
                 </div>
               </div>
